@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="hero-card">
+        <div class="hero-copy">
+            <p class="eyebrow">AI car recognition demo</p>
+            <h1>What Car Is This?</h1>
+            <p class="subtitle">Upload a car photo and get an AI-powered guess of the make and model.</p>
+        </div>
+
+        <form class="analyzer-panel" method="POST" enctype="multipart/form-data" id="upload-form">
+            <label class="upload-zone" id="upload-zone" for="car_image">
+                <input
+                    id="car_image"
+                    name="car_image"
+                    type="file"
+                    accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                    required
+                >
+                <div class="upload-zone-content">
+                    <div class="upload-icon">+</div>
+                    <p class="upload-title">Drop a car photo here</p>
+                    <p class="upload-text">or click to browse</p>
+                    <p class="upload-meta">PNG, JPG, JPEG, or WEBP up to {{ max_file_size_mb }} MB</p>
+                </div>
+                <img id="preview-image" class="preview-image hidden" alt="Selected car preview">
+            </label>
+
+            <div class="form-footer">
+                <p class="selected-file" id="selected-file">No image selected</p>
+                <button class="primary-button" type="submit" id="submit-button">
+                    <span class="button-label">Analyze Image</span>
+                    <span class="button-loader hidden" id="button-loader"></span>
+                </button>
+            </div>
+        </form>
+    </section>
+
+    {% if error_message %}
+    <section class="status-card status-error">
+        <p>{{ error_message }}</p>
+    </section>
+    {% endif %}
+
+    <section class="result-grid">
+        {% if result %}
+        <article class="result-card">
+            <div class="result-image-wrap">
+                {% if result.image_url %}
+                <img src="{{ url_for('static', filename=result.image_url) }}" alt="Uploaded car image" class="result-image">
+                {% else %}
+                <div class="result-image-placeholder">Image unavailable</div>
+                {% endif %}
+            </div>
+
+            {% if result.make or result.model %}
+            <div class="result-copy">
+                <p class="result-badge">{{ result.confidence or "Likely match" }}</p>
+                <h2>{{ result.make or "Unknown" }}{% if result.model %} {{ result.model }}{% endif %}</h2>
+                <p class="result-explanation">{{ result.best_guess_summary or result.short_explanation }}</p>
+
+                <div class="result-meta">
+                    {% if result.generation_or_trim %}
+                    <div class="meta-item">
+                        <span class="meta-label">Generation or trim</span>
+                        <span class="meta-value">{{ result.generation_or_trim }}</span>
+                    </div>
+                    {% endif %}
+                    {% if result.year_range %}
+                    <div class="meta-item">
+                        <span class="meta-label">Year range</span>
+                        <span class="meta-value">{{ result.year_range }}</span>
+                    </div>
+                    {% endif %}
+                    {% if result.body_style %}
+                    <div class="meta-item">
+                        <span class="meta-label">Body style</span>
+                        <span class="meta-value">{{ result.body_style }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if result.reasoning %}
+                <div class="reasoning-card">
+                    <span class="meta-label">Visible cues</span>
+                    <p>{{ result.reasoning }}</p>
+                </div>
+                {% endif %}
+
+                <a class="secondary-button" href="{{ url_for('index') }}">Analyze another image</a>
+            </div>
+            {% else %}
+            <div class="result-copy">
+                <p class="result-badge">Awaiting a confident match</p>
+                <h2>We could not identify this car yet.</h2>
+                <p class="result-explanation">Try another photo with a clearer front, rear, or side view and good lighting.</p>
+                <a class="secondary-button" href="{{ url_for('index') }}">Try another image</a>
+            </div>
+            {% endif %}
+        </article>
+        {% else %}
+        <article class="result-card result-card-empty">
+            <div class="result-copy">
+                <p class="result-badge">How it works</p>
+                <h2>Upload, analyze, identify.</h2>
+                <p class="result-explanation">The app sends your image to an AI vision service, then formats the best match into a simple car profile with uncertainty-aware language.</p>
+            </div>
+        </article>
+        {% endif %}
+
+        <aside class="history-card">
+            <div class="history-header">
+                <h3>Recent session history</h3>
+                <p>Your last few AI guesses stay here during this browser session.</p>
+            </div>
+
+            {% if recent_results %}
+            <div class="history-list">
+                {% for item in recent_results %}
+                <article class="history-item">
+                    <p class="history-title">{{ item.make }}{% if item.model %} {{ item.model }}{% endif %}</p>
+                    <p class="history-detail">
+                        {% if item.confidence %}{{ item.confidence }}{% endif %}
+                        {% if item.confidence and item.year_range %} • {% endif %}
+                        {% if item.year_range %}{{ item.year_range }}{% endif %}
+                        {% if (item.confidence or item.year_range) and item.body_style %} • {% endif %}
+                        {% if item.body_style %}{{ item.body_style }}{% endif %}
+                    </p>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="history-empty">No analyses yet. Your recent guesses will appear here.</p>
+            {% endif %}
+        </aside>
+    </section>
+</main>
+{% endblock %}
