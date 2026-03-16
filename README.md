@@ -1,13 +1,15 @@
-# What Car Is This?
+# SnapCar
 
 A portfolio-ready Flask demo that lets users upload a car photo and get an AI-powered guess of the make and model using OpenAI vision.
 
 ## Features
 
 - Clean, responsive upload experience with drag-and-drop support
-- Polished result card with likely match, explanation, year range, and body style
+- Polished result card with likely match, pricing context, year range, and body style
 - Session-based history of recent analyses
 - OpenAI Responses API integration for real image analysis
+- Rough MSRP and current-value estimates plus a Wikipedia link
+- A small list of 2-3 alternate likely matches for ambiguous photos
 - Mock mode for demos without a live API key
 - Isolated AI service layer for easy model/provider swaps later
 
@@ -92,6 +94,7 @@ This app sends:
 - The uploaded image as a base64 data URL
 - Your automotive identification prompt
 - A strict JSON schema so the model returns the exact fields the UI expects
+
 
 The default model is `gpt-4o-mini`, which OpenAI documents as supporting image input and structured outputs. If you want a stronger model later, change `AI_MODEL` in `.env` to another current OpenAI model that supports those features.
 

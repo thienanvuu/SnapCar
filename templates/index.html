@@ -4,8 +4,8 @@
 <main class="page-shell">
     <section class="hero-card">
         <div class="hero-copy">
-            <p class="eyebrow">AI car recognition demo</p>
-            <h1>What Car Is This?</h1>
+            <p class="eyebrow">AI car recognition</p>
+            <h1>SnapCar</h1>
             <p class="subtitle">Upload a car photo and get an AI-powered guess of the make and model.</p>
         </div>
 
@@ -79,6 +79,18 @@
                         <span class="meta-value">{{ result.body_style }}</span>
                     </div>
                     {% endif %}
+                    {% if result.msrp_when_new %}
+                    <div class="meta-item">
+                        <span class="meta-label">MSRP when new</span>
+                        <span class="meta-value">{{ result.msrp_when_new }}</span>
+                    </div>
+                    {% endif %}
+                    {% if result.estimated_market_value %}
+                    <div class="meta-item">
+                        <span class="meta-label">Rough value today</span>
+                        <span class="meta-value">{{ result.estimated_market_value }}</span>
+                    </div>
+                    {% endif %}
                 </div>
 
                 {% if result.reasoning %}
@@ -88,7 +100,23 @@
                 </div>
                 {% endif %}
 
-                <a class="secondary-button" href="{{ url_for('index') }}">Analyze another image</a>
+                {% if result.other_candidates %}
+                <div class="reasoning-card alternate-card">
+                    <span class="meta-label">Other likely matches</span>
+                    <div class="candidate-list">
+                        {% for candidate in result.other_candidates %}
+                        <span class="candidate-chip">{{ candidate }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="result-actions">
+                    {% if result.wikipedia_url %}
+                    <a class="secondary-button" href="{{ result.wikipedia_url }}" target="_blank" rel="noopener noreferrer">View on Wikipedia</a>
+                    {% endif %}
+                    <a class="secondary-button ghost-button" href="{{ url_for('index') }}">Analyze another image</a>
+                </div>
             </div>
             {% else %}
             <div class="result-copy">
@@ -126,6 +154,8 @@
                         {% if item.year_range %}{{ item.year_range }}{% endif %}
                         {% if (item.confidence or item.year_range) and item.body_style %} • {% endif %}
                         {% if item.body_style %}{{ item.body_style }}{% endif %}
+                        {% if (item.confidence or item.year_range or item.body_style) and item.estimated_market_value %} • {% endif %}
+                        {% if item.estimated_market_value %}{{ item.estimated_market_value }}{% endif %}
                     </p>
                 </article>
                 {% endfor %}

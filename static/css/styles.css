@@ -217,6 +217,17 @@ h1 {
     color: var(--text);
 }
 
+.result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ghost-button {
+    background: transparent;
+    border: 1px solid rgba(16, 24, 40, 0.1);
+}
+
 .button-loader {
     width: 16px;
     height: 16px;
@@ -338,6 +349,28 @@ h1 {
     margin: 8px 0 0;
     color: var(--muted);
     line-height: 1.7;
+}
+
+.alternate-card {
+    background: rgba(17, 17, 17, 0.028);
+}
+
+.candidate-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.candidate-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.06);
+    color: var(--text);
+    font-size: 0.92rem;
+    font-weight: 600;
 }
 
 .meta-label,

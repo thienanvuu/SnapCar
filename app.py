@@ -116,6 +116,7 @@ def add_to_history(result):
             "year_range": result.get("year_range"),
             "body_style": result.get("body_style"),
             "confidence": result.get("confidence"),
+            "estimated_market_value": result.get("estimated_market_value"),
         },
     )
     session["recent_results"] = history[:5]
